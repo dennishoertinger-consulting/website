@@ -30,10 +30,8 @@
   --primary-bg: #000000;
   --primary-fg: #ffffff;
   --primary-hover: #3a3a3c;
-  --outline-hover: #e5e5ea;
   --bar-bg: #ffffff;
   --bar-stroke: #e5e5ea;
-  --bar-outline: #86868b;
   --arrow-bg: #e5e5ea;
   --arrow-hover: #d1d1d6;
   --tile: #000000; /* Logo-Fläche frei stehend */
@@ -48,7 +46,6 @@
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --t-hover: 200ms;
   --col: 980px;
-  --gutter: 20px;
   --sec: 112px;
   --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
 }
@@ -70,10 +67,8 @@
     --primary-bg: #ffffff;
     --primary-fg: #000000;
     --primary-hover: #d1d1d6;
-    --outline-hover: #2c2c2e;
     --bar-bg: #1c1c1e;
     --bar-stroke: #2c2c2e;
-    --bar-outline: #8e8e93;
     --arrow-bg: #2c2c2e;
     --arrow-hover: #3a3a3c;
     --tile: #1c1c1e;
@@ -86,7 +81,6 @@
 
 @media (min-width: 900px) {
   :root {
-    --gutter: 24px;
     --sec: 200px;
   }
 }
@@ -192,12 +186,6 @@ img {
   font-weight: 700;
   letter-spacing: -0.02em;
 }
-.h-accent {
-  font-size: 30px;
-  line-height: 38px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
 .lead {
   font-size: 19px;
   line-height: 28px;
@@ -238,10 +226,6 @@ img {
   .h-sec {
     font-size: 40px;
     line-height: 48px;
-  }
-  .h-accent {
-    font-size: clamp(44px, 3.9vw, 56px);
-    line-height: 1.15;
   }
   .lead {
     font-size: 22px;
@@ -353,11 +337,6 @@ img {
   background: var(--inv-btn-bg);
   color: var(--inv-btn-fg);
 }
-.btn-outline {
-  border: 1.5px solid var(--bar-outline);
-  color: var(--label);
-  font-weight: 400;
-}
 .btn-photo {
   border: 1.5px solid #fff;
   color: #fff;
@@ -373,9 +352,6 @@ img {
   }
   .btn-inv:hover {
     background: var(--inv-btn-hover);
-  }
-  .btn-outline:hover {
-    background: var(--outline-hover);
   }
   .btn-photo:hover {
     background: rgba(255, 255, 255, 0.16);
