@@ -5,7 +5,8 @@ name: Veröffentlichen (GitHub Pages)
 #
 # Einmalig einstellen:
 #   Settings → Pages → Source: „GitHub Actions“, Custom domain: www.hoertinger.de, Enforce HTTPS
-#   Settings → Secrets and variables → Actions → Secret ZUGANGSCODE (mind. 8 Zeichen; löschen = Seite offen)
+#   Settings → Secrets and variables → Actions → Repository secret ZUGANGSCODE (mind. 8 Zeichen)
+#   Fehlt der Code, bricht der Lauf ab. Zum Livegang: Variable OHNE_ZUGANGSCODE=ja setzen.
 
 on:
   push:
@@ -32,12 +33,13 @@ jobs:
           node-version: 22
 
       - name: Seite zusammenstellen
-        run: rsync -a --exclude '.git' --exclude '.github' --exclude 'CLAUDE.md' --exclude 'README.md' ./ _site/
+        run: rsync -a --exclude '.git' --exclude '.github' --exclude 'CLAUDE.md' --exclude 'README.md' --exclude '.gitignore' ./ _site/
 
       - name: Mit Zugangscode verschlüsseln
         run: node .github/zugang/verschluesseln.mjs
         env:
           ZUGANGSCODE: ${{ secrets.ZUGANGSCODE }}
+          OHNE_ZUGANGSCODE: ${{ vars.OHNE_ZUGANGSCODE }}
 
       - uses: actions/upload-pages-artifact@v3
         with:

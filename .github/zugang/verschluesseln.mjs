@@ -1,6 +1,7 @@
 // Verschlüsselt beim Veröffentlichen alle HTML-Seiten in _site/ mit dem Zugangscode (StatiCrypt, AES-256).
 // Läuft nur in GitHub Actions (siehe .github/workflows/pages.yml). Im Repo selbst bleibt alles reines HTML.
-// Ohne Secret ZUGANGSCODE passiert nichts: Die Seite ist dann offen.
+// Fehlt das Secret ZUGANGSCODE, bricht der Lauf ab, damit nichts versehentlich offen online geht.
+// Zum Livegang die Actions-Variable OHNE_ZUGANGSCODE=ja setzen: Dann wird ohne Sperre veröffentlicht.
 //
 // Danach wird geprüft, dass kein Text aus den Seiten mehr lesbar in _site/ steht.
 // Sonst bricht der Lauf ab, damit nichts unverschlüsselt online geht.
@@ -17,8 +18,13 @@ const TMP = '.zugang-tmp';
 
 const code = process.env.ZUGANGSCODE?.trim();
 if (!code) {
-  console.log('Zugangscode: ZUGANGSCODE nicht gesetzt, Seite bleibt offen.');
-  process.exit(0);
+  if (process.env.OHNE_ZUGANGSCODE === 'ja') {
+    console.log('Zugangscode: OHNE_ZUGANGSCODE=ja, Seite wird ohne Sperre veröffentlicht.');
+    process.exit(0);
+  }
+  console.error('Zugangscode: Secret ZUGANGSCODE fehlt. Abbruch, damit die Seite nicht offen online geht.');
+  console.error('Für den Livegang ohne Sperre die Actions-Variable OHNE_ZUGANGSCODE=ja setzen.');
+  process.exit(1);
 }
 if (code.length < 8) {
   console.error('Zugangscode: bitte mindestens 8 Zeichen verwenden (Schutz gegen Durchprobieren).');

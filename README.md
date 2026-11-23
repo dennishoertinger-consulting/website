@@ -36,7 +36,7 @@ dann http://localhost:8000.
 ## Zugangscode (bis zum Livegang)
 
 Bei jedem Push auf `main` veröffentlicht `.github/workflows/pages.yml` die Seite auf GitHub Pages.
-Ist das Secret `ZUGANGSCODE` gesetzt, werden dabei alle HTML-Seiten mit StatiCrypt (AES-256) verschlüsselt.
+Dabei werden alle HTML-Seiten mit dem Secret `ZUGANGSCODE` per StatiCrypt (AES-256) verschlüsselt. Fehlt das Secret, bricht die Veröffentlichung ab.
 Besucher sehen dann nur „Bald online.“ mit einem Code-Feld; der Code bleibt 30 Tage gemerkt.
 Das passiert nur in der veröffentlichten Kopie, im Repo bleibt alles reines HTML.
 
@@ -48,7 +48,7 @@ Das passiert nur in der veröffentlichten Kopie, im Repo bleibt alles reines HTM
 ## Livegang (frühestens 1.12.2026)
 
 1. In allen HTML-Dateien die Zeile `<meta name="robots" content="noindex, nofollow">` entfernen.
-2. Secret `ZUGANGSCODE` löschen und den Workflow neu starten.
+2. Actions-Variable `OHNE_ZUGANGSCODE` mit Wert `ja` anlegen, Secret `ZUGANGSCODE` löschen und den Workflow neu starten.
 3. Platzhalter ersetzen: E-Mail (hallo@example.com), Anschrift, Fotos, Artikeltexte.
 
 Domain: in Settings → Pages als `www.hoertinger.de` eingetragen, „Enforce HTTPS“ an.
