@@ -1,0 +1,54 @@
+name: Veröffentlichen (GitHub Pages)
+
+# Veröffentlicht die Website bei jedem Push auf main auf GitHub Pages.
+# Im Repo bleibt alles reines HTML/CSS/JS; verschlüsselt wird nur die veröffentlichte Kopie.
+#
+# Einmalig einstellen:
+#   Settings → Pages → Source: „GitHub Actions“, Custom domain: www.hoertinger.de, Enforce HTTPS
+#   Settings → Secrets and variables → Actions → Secret ZUGANGSCODE (mind. 8 Zeichen; löschen = Seite offen)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Seite zusammenstellen
+        run: rsync -a --exclude '.git' --exclude '.github' --exclude 'CLAUDE.md' --exclude 'README.md' ./ _site/
+
+      - name: Mit Zugangscode verschlüsseln
+        run: node .github/zugang/verschluesseln.mjs
+        env:
+          ZUGANGSCODE: ${{ secrets.ZUGANGSCODE }}
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -2,6 +2,7 @@
 
 Einfachst denkbares Setup: statisches HTML/CSS/JS, kein Build, kein npm, kein Framework.
 Nichts hinzufügen, was einen Build-Schritt oder Abhängigkeiten braucht.
+Einzige Ausnahme: Die Zugangscode-Verschlüsselung läuft nur in GitHub Actions (`.github/`), nicht lokal.
 
 ## Arbeitsweise
 - Vor jedem Auftrag die wichtigsten Rückfragen gebündelt stellen. Genauigkeit vor Tempo.
