@@ -1,0 +1,7 @@
+# Prüft monatlich, ob es neue Versionen der GitHub Actions gibt, und schlägt sie als Pull Request vor.
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
