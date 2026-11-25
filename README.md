@@ -1,6 +1,6 @@
 # Website Dennis Hörtinger – IT Consulting
 
-Make work better.
+make work better_
 
 Reine HTML/CSS/JS-Seite. Kein Build, keine Abhängigkeiten, kein Framework.
 Gehostet auf GitHub Pages, Domain hoertinger.de (DNS bei INWX).
@@ -13,8 +13,8 @@ leistungen/ projekte/ ueber-mich/ notizen/ impressum/   Unterseiten (je index.ht
 notizen/<artikel>/      Artikel
 404.html                Fehlerseite
 assets/css/style.css    alle Styles, Farben als Tokens oben in :root
-assets/js/main.js       Menü, Switch, Karussell, „Mehr lesen“, Einblenden
-assets/fonts/           Inter (selbst gehostet, Lizenz liegt bei)
+assets/js/main.js       Menü, Menüleiste, Tabs, Zitate, Tippen, „Mehr lesen“, Einblenden
+assets/fonts/           Geist, Geist Mono, Space Grotesk (selbst gehostet, Lizenzen liegen bei)
 assets/logos/  assets/fotos/
 favicon.svg
 ```
@@ -29,9 +29,10 @@ dann http://localhost:8000.
 
 ## Regeln
 
-- Keine Cookies, kein Tracking, keine externen Dienste (keine Google Fonts, keine CDNs).
-- Design: Schwarz-Weiß plus Himmelblau, Light Standard, Night über Systemeinstellung.
-- Vorlage des Designs: `Website_Design.svg` (liegt bewusst nicht im Repo).
+- Keine externen Dienste (keine Google Fonts, keine CDNs). Ausnahme: Google Analytics 4 (Mess-ID in assets/js/main.js),
+  lädt erst nach Zustimmung im Hinweis; Erlaubnis in der CSP in .github/zugang/sicherheit.mjs.
+- Design nach CI Version 13: Eisgrau, Weiß, Schwarz, Klein-Blau nur für Claim, Cursor und Links. Light Standard, Night über Systemeinstellung.
+- Vorlage: CI-Übergabe und Entwurf (liegen bewusst nicht im Repo).
 
 ## Zugangscode (bis zum Livegang)
 
