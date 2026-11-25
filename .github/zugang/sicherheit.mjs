@@ -7,7 +7,6 @@
 //
 // Wird zweimal aufgerufen: vor dem Verschlüsseln (für die eigentlichen Seiten) und danach (für die Code-Seite).
 // Kommt ein externer Dienst dazu (z. B. Videos), muss seine Quelle hier in CSP ergänzt werden.
-// Freigegeben: Google Analytics 4 (nur nach Einwilligung, Entscheidung Dennis 25.11.2026).
 
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -15,12 +14,11 @@ import { join } from 'node:path';
 const SITE = '_site';
 const CSP = [
   "default-src 'self'",
-  // Google Analytics 4: lädt erst nach Zustimmung im Hinweis (assets/js/main.js)
-  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com",
+  "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com",
+  "img-src 'self' data:",
   "font-src 'self'",
-  "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com",
+  "connect-src 'self'",
   "frame-src 'none'",
   "object-src 'none'",
   "base-uri 'self'",
