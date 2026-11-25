@@ -9,7 +9,8 @@ Einzige Ausnahme: Die Zugangscode-Verschlüsselung läuft nur in GitHub Actions 
 - Das Repo ist öffentlich. Jeder Push ist eine Veröffentlichung: erst Inhalt freigeben lassen,
   dann direkt vor dem Push eine ausdrückliche zweite Bestätigung einholen.
 - Niemals private Daten (Privatadresse, private E-Mail, Fotos Dritter) committen.
-- Datenschutz/DSGVO hat höchste Priorität: keine Cookies, kein Tracking, keine externen Ressourcen.
+- Datenschutz/DSGVO hat höchste Priorität: keine externen Ressourcen. Einzige Ausnahme: Google Analytics 4,
+  lädt nur nach Einwilligung im Hinweis (Entscheidung Dennis, 25.11.2026). Ohne Zustimmung keine Cookies, kein Tracking.
 
 ## Sprache und Inhalt
 - Berufsbezeichnung nur „IT Consultant“ / „IT Consulting“.

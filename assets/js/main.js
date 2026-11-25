@@ -165,6 +165,84 @@
     heads.forEach(function (h) { tio.observe(h); });
   }
 
+  /* ---------- Google Analytics 4: lädt nur nach Zustimmung ---------- */
+  var GA_ID = 'G-494G3RX0CJ';
+  var KEY = 'ga-einwilligung';
+  var base = (function () {
+    var me = document.querySelector('script[src*="assets/js/main.js"]');
+    return me ? me.src.replace(/assets\/js\/main\.js.*$/, '') : '/';
+  })();
+  function readChoice() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function saveChoice(v) { try { localStorage.setItem(KEY, v); } catch (e) { /* ohne Speicher: gilt nur für diesen Aufruf */ } }
+  var gaLoaded = false;
+  function loadGA() {
+    if (gaLoaded) return;
+    gaLoaded = true;
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    window.gtag('config', GA_ID, { allow_google_signals: false, allow_ad_personalization_signals: false });
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    document.head.appendChild(s);
+  }
+  function clearGACookies() {
+    document.cookie.split(';').forEach(function (c) {
+      var name = c.split('=')[0].trim();
+      if (name.indexOf('_ga') !== 0) return;
+      var host = location.hostname.split('.');
+      for (var i = 0; i < host.length - 1; i++) {
+        var d = host.slice(i).join('.');
+        document.cookie = name + '=; Max-Age=0; path=/; domain=' + d;
+        document.cookie = name + '=; Max-Age=0; path=/; domain=.' + d;
+      }
+      document.cookie = name + '=; Max-Age=0; path=/';
+    });
+  }
+  var banner = null;
+  function closeBanner() { if (banner) { banner.remove(); banner = null; } }
+  function decide(v) {
+    var before = readChoice();
+    saveChoice(v);
+    closeBanner();
+    if (v === 'ja') loadGA();
+    else {
+      clearGACookies();
+      if (before === 'ja') window.location.reload(); // bereits geladenes Google-Skript sicher entfernen
+    }
+  }
+  function showBanner(focus) {
+    if (banner) return;
+    banner = document.createElement('section');
+    banner.className = 'consent';
+    banner.setAttribute('aria-label', 'Cookie-Hinweis');
+    banner.innerHTML =
+      '<p class="consent-text">Darf ich mit Google Analytics messen, welche Seiten gelesen werden? Dafür setzt Google Cookies. ' +
+      'Ohne Zustimmung wird nichts übertragen. <a href="' + base + 'impressum/#datenschutz">Datenschutz</a></p>' +
+      '<div class="consent-btns">' +
+      '<button type="button" class="btn btn-primary" data-consent="nein">Ablehnen</button>' +
+      '<button type="button" class="btn btn-primary" data-consent="ja">Zustimmen</button>' +
+      '</div>';
+    banner.querySelectorAll('[data-consent]').forEach(function (b) {
+      b.addEventListener('click', function () { decide(b.getAttribute('data-consent')); });
+    });
+    document.body.appendChild(banner);
+    if (focus) banner.querySelector('button').focus();
+  }
+  var choice = readChoice();
+  if (choice === 'ja') loadGA();
+  else if (choice !== 'nein') showBanner(false);
+  document.querySelectorAll('.footer-legal').forEach(function (p) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'consent-open';
+    b.textContent = 'Cookie-Einstellungen';
+    b.addEventListener('click', function () { showBanner(true); });
+    var last = p.lastElementChild;
+    p.insertBefore(b, last);
+  });
+
   /* ---------- „Mehr lesen“ ---------- */
   document.querySelectorAll('.more-btn').forEach(function (b) {
     var box = document.getElementById(b.getAttribute('aria-controls'));

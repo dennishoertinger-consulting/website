@@ -29,7 +29,8 @@ dann http://localhost:8000.
 
 ## Regeln
 
-- Keine Cookies, kein Tracking, keine externen Dienste (keine Google Fonts, keine CDNs).
+- Keine externen Dienste (keine Google Fonts, keine CDNs). Ausnahme: Google Analytics 4 (Mess-ID in assets/js/main.js),
+  lädt erst nach Zustimmung im Hinweis; Erlaubnis in der CSP in .github/zugang/sicherheit.mjs.
 - Design nach CI Version 13: Eisgrau, Weiß, Schwarz, Klein-Blau nur für Claim, Cursor und Links. Light Standard, Night über Systemeinstellung.
 - Vorlage: CI-Übergabe und Entwurf (liegen bewusst nicht im Repo).
 
