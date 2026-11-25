@@ -13,15 +13,20 @@ Einzige Ausnahme: Die Zugangscode-Verschlüsselung läuft nur in GitHub Actions 
 
 ## Sprache und Inhalt
 - Berufsbezeichnung nur „IT Consultant“ / „IT Consulting“.
-- Leser mit „du“ ansprechen. Claim: „Make work better.“ CTA überall „Work with me“.
+- Leser mit „du“ ansprechen. Claim: „make work better_“. CTA überall „Work with me“.
 - Ton: Dennis' eigene Sprache, fachlich fundiert, ruhig, keine Buzzwords, kein Werbeton,
   kein Technik-Bashing. Keine Kennzahlen, stattdessen Zitate aus Arbeitszeugnissen.
 
 ## Design
-- Schwarz-Weiß plus Himmelblau, sonst keine Farben. Kein Liquid Glass.
-- Light ist Standard, Night über `prefers-color-scheme`. Breakpoint Desktop ab 900 px.
-- Viel Luft, minimal, keine Overlines. Animationen dezent, `prefers-reduced-motion` respektieren.
-- Design-Quelle ist eine einzige Datei `Website_Design.svg` (nicht im Repo).
+- Maßgeblich ist die CI (Version 13, 25.11.2026). Tokens oben in `assets/css/style.css`.
+- Farben: Eisgrau #EFF2F5 (Seitengrund), Weiß (Kacheln), Schwarz (Text, primäre Buttons, Kontakt, Projekt-Kacheln),
+  Schiefer #56606B (Nebentext), Linie #D9DEE4. Klein-Blau #0000FF nur für Claim „better“, Unterstrich-Cursor und Links („Mehr“).
+  Keine Verläufe, keine Pillen, keine blauen Buttons, keine Kreise. Radien nur 10 (Buttons), 12 (Karten), 16 (Menüleiste).
+- Schrift (selbst gehostet in `assets/fonts/`): Space Grotesk 700 nur Claim, Geist für alles andere, Geist Mono nur kleine Beschriftungen.
+- Light ist Standard, Night über `prefers-color-scheme` (Werte aus der CI). Breakpoint Desktop ab 900 px.
+- Viel Luft, minimal, keine Overlines. Schatten nur an der Menüleiste beim Scrollen.
+- Bewegung: „better“ wird getippt, Cursor blinkt dauerhaft; Abschnittsüberschriften tippen sich beim Scrollen.
+  Bei `prefers-reduced-motion` steht alles sofort.
 
 ## Technik
 - Relative Pfade in allen Seiten (funktioniert lokal, unter Unterordner und mit Domain).
