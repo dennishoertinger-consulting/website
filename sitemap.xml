@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Alle Seiten, die Google finden soll. Neue Seite oder fertiger Artikel: hier eintragen, lastmod anpassen. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://www.hoertinger.de/</loc><lastmod>2026-12-01</lastmod></url>
-  <url><loc>https://www.hoertinger.de/leistungen/</loc><lastmod>2026-12-01</lastmod></url>
-  <url><loc>https://www.hoertinger.de/projekte/</loc><lastmod>2026-12-01</lastmod></url>
-  <url><loc>https://www.hoertinger.de/ueber-mich/</loc><lastmod>2026-12-01</lastmod></url>
-  <url><loc>https://www.hoertinger.de/notizen/</loc><lastmod>2026-12-01</lastmod></url>
-  <url><loc>https://www.hoertinger.de/impressum/</loc><lastmod>2026-12-01</lastmod></url>
+  <url><loc>https://www.hoertinger.de/</loc><lastmod>2026-11-25</lastmod></url>
+  <url><loc>https://www.hoertinger.de/leistungen/</loc><lastmod>2026-11-25</lastmod></url>
+  <url><loc>https://www.hoertinger.de/projekte/</loc><lastmod>2026-11-25</lastmod></url>
+  <url><loc>https://www.hoertinger.de/ueber-mich/</loc><lastmod>2026-11-25</lastmod></url>
+  <url><loc>https://www.hoertinger.de/notizen/</loc><lastmod>2026-11-25</lastmod></url>
+  <url><loc>https://www.hoertinger.de/impressum/</loc><lastmod>2026-11-25</lastmod></url>
 </urlset>
