@@ -1,0 +1,5 @@
+# Suchmaschinen dürfen alles lesen. Bis zum Livegang verhindert noindex in jeder Seite die Aufnahme.
+User-agent: *
+Allow: /
+
+Sitemap: https://www.hoertinger.de/sitemap.xml
