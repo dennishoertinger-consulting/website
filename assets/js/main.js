@@ -1,10 +1,19 @@
-/* Make work better. – kleine Helfer für Menü, Switch, Karussell, „Mehr lesen“ und Einblenden.
+/* make work better – kleine Helfer für Menü, Menüleiste, Tabs, Zitate, Tippen, „Mehr lesen“ und Einblenden.
    Ohne JavaScript bleibt alles lesbar und sichtbar. */
 (function () {
   'use strict';
   var root = document.documentElement;
   root.classList.add('js');
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hasIO = 'IntersectionObserver' in window;
+
+  /* ---------- Menüleiste: Schatten beim Scrollen ---------- */
+  var nav = document.querySelector('.nav');
+  if (nav) {
+    var onScroll = function () { nav.classList.toggle('is-scrolled', window.scrollY > 24); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
 
   /* ---------- Menü mobil ---------- */
   var menu = document.getElementById('menu');
@@ -18,7 +27,8 @@
     else menu.setAttribute('inert', '');
     burger.setAttribute('aria-expanded', String(open));
     document.body.style.overflow = open ? 'hidden' : '';
-    (open ? closeBtn : burger).focus();
+    var target = open ? closeBtn : burger;
+    if (open) setTimeout(function () { target.focus(); }, 30); else target.focus();
   }
   if (menu && burger) {
     burger.addEventListener('click', function () { setMenu(true); });
@@ -41,13 +51,12 @@
     });
   }
 
-  /* ---------- Switch „Wie ich arbeite“ ---------- */
+  /* ---------- Tabs „Drei Schritte“ ---------- */
   document.querySelectorAll('.switch').forEach(function (sw) {
     var tabs = sw.querySelectorAll('.switch-tab');
-    var panels = document.querySelectorAll('.switch-panel .step');
+    var panels = sw.parentNode.querySelectorAll('.switch-panel .step');
     function select(i, focus) {
       var n = (i + tabs.length) % tabs.length;
-      sw.style.setProperty('--sel', n);
       tabs.forEach(function (t, k) {
         t.setAttribute('aria-selected', String(k === n));
         t.tabIndex = k === n ? 0 : -1;
@@ -57,39 +66,181 @@
         p.setAttribute('aria-hidden', String(k !== n));
       });
       if (focus) tabs[n].focus();
-      sw.dataset.sel = n;
     }
     tabs.forEach(function (t, i) {
       t.addEventListener('click', function () { select(i); });
       t.addEventListener('keydown', function (e) {
-        if (e.key === 'ArrowRight') select(i + 1, true);
-        if (e.key === 'ArrowLeft') select(i - 1, true);
+        if (e.key === 'ArrowRight') { e.preventDefault(); select(i + 1, true); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); select(i - 1, true); }
+        if (e.key === 'Home') { e.preventDefault(); select(0, true); }
+        if (e.key === 'End') { e.preventDefault(); select(tabs.length - 1, true); }
       });
     });
-    var next = sw.querySelector('.switch-next');
-    if (next) next.addEventListener('click', function () { select(Number(sw.dataset.sel || 0) + 1); });
     select(0);
   });
 
-  /* ---------- Karussell ---------- */
-  document.querySelectorAll('.carousel').forEach(function (c) {
-    var track = c.querySelector('.carousel-track');
-    var prev = c.querySelector('[data-dir="-1"]');
-    var next = c.querySelector('[data-dir="1"]');
-    function update() {
-      prev.disabled = track.scrollLeft <= 4;
-      next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
-    }
-    [prev, next].forEach(function (b) {
-      b.addEventListener('click', function () {
-        var item = track.querySelector('.carousel-item');
-        var w = item ? item.offsetWidth + 16 : track.clientWidth * 0.8;
-        track.scrollBy({ left: Number(b.dataset.dir) * w, behavior: reduce ? 'auto' : 'smooth' });
+  /* ---------- Zitate: eins nach dem anderen, endlos ---------- */
+  document.querySelectorAll('[data-quotes]').forEach(function (box) {
+    var items = box.querySelectorAll('.quote');
+    var count = box.querySelector('.quote-count');
+    var cur = 0;
+    function show(i) {
+      cur = (i + items.length) % items.length;
+      items.forEach(function (q, k) {
+        q.classList.toggle('is-active', k === cur);
+        q.setAttribute('aria-hidden', String(k !== cur));
       });
+      if (count) count.textContent = (cur + 1) + ' / ' + items.length;
+    }
+    box.querySelector('[data-dir="-1"]').addEventListener('click', function () { show(cur - 1); });
+    box.querySelector('[data-dir="1"]').addEventListener('click', function () { show(cur + 1); });
+    show(0);
+  });
+
+  /* ---------- Claim: „better“ wird getippt, dann blinkt der Unterstrich ---------- */
+  document.querySelectorAll('.claim-better').forEach(function (el) {
+    var cursor = el.querySelector('.cursor');
+    var word = el.querySelector('.claim-typed');
+    if (!word) return;
+    if (reduce) { word.classList.add('is-ready'); return; }
+    var text = word.textContent;
+    word.textContent = '';
+    var letters = text.split('').map(function (ch) {
+      var s = document.createElement('span');
+      s.className = 'letter';
+      s.textContent = ch;
+      s.hidden = true;
+      word.appendChild(s);
+      return s;
     });
-    track.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update);
-    update();
+    word.classList.add('is-ready');
+    var steps = [110, 95, 140, 90, 120, 105], t = 450;
+    letters.forEach(function (s, i) {
+      t += steps[i % steps.length];
+      setTimeout(function () { s.hidden = false; }, t);
+    });
+    setTimeout(function () { if (cursor) cursor.classList.add('is-blinking'); }, t + 60);
+  });
+
+  /* ---------- Abschnittsüberschriften tippen sich beim Scrollen ---------- */
+  if (!reduce && hasIO) {
+    var heads = [];
+    document.querySelectorAll('[data-type]').forEach(function (h) {
+      if (h.getBoundingClientRect().top <= window.innerHeight * 0.85) return; // schon sichtbar: steht sofort
+      var text = h.textContent.trim();
+      h.setAttribute('aria-label', text);
+      h.textContent = '';
+      var wrap = document.createElement('span');
+      wrap.className = 'type-wrap';
+      wrap.setAttribute('aria-hidden', 'true');
+      var ghost = document.createElement('span');
+      ghost.className = 'type-ghost';
+      ghost.textContent = text;
+      var live = document.createElement('span');
+      live.className = 'type-live';
+      var typed = document.createTextNode('');
+      live.appendChild(typed);
+      wrap.appendChild(ghost);
+      wrap.appendChild(live);
+      h.appendChild(wrap);
+      h._type = { text: text, typed: typed, live: live };
+      heads.push(h);
+    });
+    var tio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        tio.unobserve(e.target);
+        var d = e.target._type;
+        var cur = document.createElement('span');
+        cur.className = 'cursor';
+        d.live.appendChild(cur);
+        var n = 0;
+        var timer = setInterval(function () {
+          n += 1;
+          d.typed.nodeValue = d.text.slice(0, n);
+          if (n >= d.text.length) { clearInterval(timer); cur.remove(); }
+        }, 32);
+      });
+    }, { threshold: 0.6 });
+    heads.forEach(function (h) { tio.observe(h); });
+  }
+
+  /* ---------- Google Analytics 4: lädt nur nach Zustimmung ---------- */
+  var GA_ID = 'G-494G3RX0CJ';
+  var KEY = 'ga-einwilligung';
+  var base = (function () {
+    var me = document.querySelector('script[src*="assets/js/main.js"]');
+    return me ? me.src.replace(/assets\/js\/main\.js.*$/, '') : '/';
+  })();
+  function readChoice() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function saveChoice(v) { try { localStorage.setItem(KEY, v); } catch (e) { /* ohne Speicher: gilt nur für diesen Aufruf */ } }
+  var gaLoaded = false;
+  function loadGA() {
+    if (gaLoaded) return;
+    gaLoaded = true;
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    window.gtag('config', GA_ID, { allow_google_signals: false, allow_ad_personalization_signals: false });
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    document.head.appendChild(s);
+  }
+  function clearGACookies() {
+    document.cookie.split(';').forEach(function (c) {
+      var name = c.split('=')[0].trim();
+      if (name.indexOf('_ga') !== 0) return;
+      var host = location.hostname.split('.');
+      for (var i = 0; i < host.length - 1; i++) {
+        var d = host.slice(i).join('.');
+        document.cookie = name + '=; Max-Age=0; path=/; domain=' + d;
+        document.cookie = name + '=; Max-Age=0; path=/; domain=.' + d;
+      }
+      document.cookie = name + '=; Max-Age=0; path=/';
+    });
+  }
+  var banner = null;
+  function closeBanner() { if (banner) { banner.remove(); banner = null; } }
+  function decide(v) {
+    var before = readChoice();
+    saveChoice(v);
+    closeBanner();
+    if (v === 'ja') loadGA();
+    else {
+      clearGACookies();
+      if (before === 'ja') window.location.reload(); // bereits geladenes Google-Skript sicher entfernen
+    }
+  }
+  function showBanner(focus) {
+    if (banner) return;
+    banner = document.createElement('section');
+    banner.className = 'consent';
+    banner.setAttribute('aria-label', 'Cookie-Hinweis');
+    banner.innerHTML =
+      '<p class="consent-text">Darf ich mit Google Analytics messen, welche Seiten gelesen werden? Dafür setzt Google Cookies. ' +
+      'Ohne Zustimmung wird nichts übertragen. <a href="' + base + 'impressum/#datenschutz">Datenschutz</a></p>' +
+      '<div class="consent-btns">' +
+      '<button type="button" class="btn btn-primary" data-consent="nein">Ablehnen</button>' +
+      '<button type="button" class="btn btn-primary" data-consent="ja">Zustimmen</button>' +
+      '</div>';
+    banner.querySelectorAll('[data-consent]').forEach(function (b) {
+      b.addEventListener('click', function () { decide(b.getAttribute('data-consent')); });
+    });
+    document.body.appendChild(banner);
+    if (focus) banner.querySelector('button').focus();
+  }
+  var choice = readChoice();
+  if (choice === 'ja') loadGA();
+  else if (choice !== 'nein') showBanner(false);
+  document.querySelectorAll('.footer-legal').forEach(function (p) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'consent-open';
+    b.textContent = 'Cookie-Einstellungen';
+    b.addEventListener('click', function () { showBanner(true); });
+    var last = p.lastElementChild;
+    p.insertBefore(b, last);
   });
 
   /* ---------- „Mehr lesen“ ---------- */
@@ -107,7 +258,7 @@
 
   /* ---------- Einblenden beim Scrollen ---------- */
   var els = document.querySelectorAll('[data-reveal]');
-  if (!('IntersectionObserver' in window)) {
+  if (!hasIO) {
     els.forEach(function (el) { el.classList.add('is-visible'); });
     return;
   }
